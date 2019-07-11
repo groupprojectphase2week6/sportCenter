@@ -1,5 +1,4 @@
-
-    function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, next) {
     if (!err.message) {
       if (err.code == 401) {
         res.status(401).json({
@@ -29,6 +28,6 @@
         })
       }
     }
-  }
+}
 
   module.exports = errorHandler
