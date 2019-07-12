@@ -1,26 +1,25 @@
 const baseUrl = `http://localhost:3000`
 
 $(document).ready(() => {
-    // preLogin()
-    // getMatch()
-    // upComming()
-    // registerUser()
-    // loginUser()
-    Login()
-    getMatch()
-    upComming()
+    homePage()
+
+    $('#registerPage').click(function(event) {
+        event.preventDefault()
+        showHideRegisterPage()
+    })
+
+    $('#loginPage').click(function(event) {
+        event.preventDefault()
+        showHideLoginPage()
+    })
     getNews()
     registerUser()
     loginUser()
-    homePage()
-    loginPage()
-    registerPage()
 })
 
 
 function homePage() {
     $('#form-register').hide()
-    $('#match').hide()
     $('#form-signin').hide()
     $('#carouselImg').show()
 }
@@ -31,6 +30,7 @@ function showHideLoginPage() {
     $('#match').hide()
     $('#form-signin').show()
     $('#carouselImg').hide()
+    $('#sidebar').hide()
 }
 
 function showHideRegisterPage() {
@@ -39,74 +39,7 @@ function showHideRegisterPage() {
     $('#match').hide()
     $('#form-signin').hide()
     $('#carouselImg').hide()
-}
-
-function registerPage() {
-    $('#registerPage').click(function(event) {
-        event.preventDefault()
-        showHideRegisterPage()
-    })
-}
-
-function loginPage() {
-    $('#loginPage').click(function(event) {
-        event.preventDefault()
-        showHideLoginPage()
-    })
-}
-
-function getMatch(){
-    $.ajax({
-        url: `https://api.football-data.org/v2/competitions/CL/matches?status=FINISHED`,
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
-        }
-    })
-    .done(({matches})=> {
-        for (let i = 0; i < matches.length; i++){
-            $('#match').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} ${matches[i].score.fullTime.homeTeam} vs ${matches[i].score.fullTime.awayTeam} ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
-        }
-        console.log(matches)
-    })
-    .fail((jqXHR, textstatus) => {
-        console.log('fail', textstatus)
-    })
-}
-
-function upComming(){
-    $.ajax({
-        url: `https://api.football-data.org/v2/competitions/CL/matches?status=SCHEDULED`,
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
-        }
-    })
-    .done(({matches})=> {
-        for (let i = 0; i < matches.length; i++){
-            $('#match').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} vs  ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
-        }
-        console.log(matches)
-    })
-    .fail((jqXHR, textstatus) => {
-        console.log('fail', textstatus)
-    })
+    $('#sidebar').hide()
 }
 
 
@@ -196,20 +129,6 @@ function signOut() {
         localStorage.removeItem('picture')
       console.log('User signed out.');
     });
-}
-
-function preLogin(){
-    $('#form-signin').show()
-    $('#form-register').hide()
-    $('#match').hide()
-    $('#upComming').hide()
-    $('#sidebar').hide()
-}
-
-function Login(){
-    $('#form-signin').hide()
-    $('#form-register').hide()
-    $('#sidebar').show()
 }
 
 function showUserProfile() {
