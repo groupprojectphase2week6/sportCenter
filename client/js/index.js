@@ -1,11 +1,53 @@
 const baseUrl = `http://localhost:3000`
 
 $(document).ready(() => {
-    // getMatch()
+    getMatch()
     upComming()
+    getNews()
     registerUser()
     loginUser()
+    homePage()
+    loginPage()
+    registerPage()
+    // showUserProfile()
 })
+
+function homePage() {
+    $('#form-register').hide()
+    $('#match').hide()
+    $('#form-signin').hide()
+    $('#carouselImg').show()
+}
+
+function showHideLoginPage() {
+    $('form-signin').empty()
+    $('#form-register').hide()
+    $('#match').hide()
+    $('#form-signin').show()
+    $('#carouselImg').hide()
+}
+
+function showHideRegisterPage() {
+    $('form-register').empty()
+    $('#form-register').show()
+    $('#match').hide()
+    $('#form-signin').hide()
+    $('#carouselImg').hide()
+}
+
+function registerPage() {
+    $('#registerPage').click(function(event) {
+        event.preventDefault()
+        showHideRegisterPage()
+    })
+}
+
+function loginPage() {
+    $('#loginPage').click(function(event) {
+        event.preventDefault()
+        showHideLoginPage()
+    })
+}
 
 function getMatch(){
     $.ajax({
@@ -103,7 +145,10 @@ function loginUser() {
             // },
     })
         .done((datas) => {
+            console.log(datas);
             localStorage.setItem('token', datas)
+            localStorage.setItem('email', $("#inputEmail").val())
+
         })
         .fail((err) => {
             console.log(err);
@@ -127,6 +172,10 @@ function onSignIn(googleUser) {
     })
         .done((datas) => {
             localStorage.setItem('token',datas)
+            localStorage.setItem('email',profile.getEmail())
+            localStorage.setItem('picture',profile.getImageUrl())
+            showUserProfile()
+            homePage()
         })
         .fail((err) => {
             console.log(err);
@@ -137,8 +186,37 @@ function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         localStorage.removeItem('token')
+        localStorage.removeItem('email')
+        localStorage.removeItem('picture')
       console.log('User signed out.');
     });
+}
+
+function showUserProfile() {
+   const storageToken = localStorage.getItem('token')
+   const emailToken = localStorage.getItem('email')
+   const picture = localStorage.getItem('picture')
+//    console.log(storageToken);
+    // console.log(emailToken);
+   if(storageToken && emailToken) {
+       $('#profile').append(`
+       <div class="card">
+       <img src="${picture}" class="img-thumbnail rounded-circle">
+       <div class="card-body">
+         <h5 class="card-title">${emailToken}</h5>
+         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+       </div>
+       <ul class="list-group list-group-flush">
+         <li class="list-group-item">Cras justo odio</li>
+         <li class="list-group-item">Dapibus ac facilisis in</li>
+         <li class="list-group-item">Vestibulum at eros</li>
+       </ul>
+     </div>
+       `)
+    //    $('#profile').show()
+   } else {
+       $('#profile').hide()
+   }
 }
 
 
