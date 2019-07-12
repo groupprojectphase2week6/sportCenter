@@ -28,7 +28,7 @@ class UserController {
                             email: datas.email,
                             _id: datas._id
                         })
-                        console.log(token);
+                        // console.log(token);
                         res.status(200).json(token)
                     } else {
                         throw {code:404, message: `username/password salah`}
@@ -54,13 +54,16 @@ class UserController {
                 return User.findOne({email:payload.email})
             })
             .then((emailFound) => {
+                // console.log(emailFound);
                 if(emailFound) {
                     const token = sign({
                         username: emailFound.username,
                         email: emailFound.email
                     })
                     res.status(200).json(token)
+                    next()
                 } else {
+                    console.log(emailFound)
                     return User.create({
                         username: payload.name,
                         email: payload.email,
@@ -69,6 +72,7 @@ class UserController {
                 }
             })
             .then((dataCreated) => {
+                // console.log(dataCreated);
                 const token = sign({
                     username: dataCreated.username,
                     email: dataCreated.email
