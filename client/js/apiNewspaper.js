@@ -30,3 +30,27 @@ function getNews() {
         }
     })
 }
+
+function getMoreNews() {
+    $.ajax({
+        method: 'GET',
+        url: `https://newsapi.org/v2/everything?q=PremierLeague&pageSize=4&apiKey=5828c40a6d474f479e1af34e80ade025`,
+    })
+    .done(({articles}) => {
+        for(let i = 0; i < articles.length;i++) {
+            console.log(articles[i]);
+            $('#moreNews').append(`
+            <div class="col-md-12  ">
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title">${articles[i].title}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">${articles[i].author}</h6>
+                <p class="card-text">${articles[i].description}</p>
+                <a href="${articles[i].url}" class="card-link">Read more</a>
+            </div>
+            </div>
+            </div>
+            `)
+        }
+    })
+}

@@ -1,30 +1,37 @@
 const baseUrl = `http://localhost:3000`
 
 $(document).ready(() => {
-    // preLogin()
-    // getMatch()
-    // upComming()
-    // registerUser()
-    // loginUser()
-    Login()
-    getMatch()
-    upComming()
+    homePage()
+
+    if(localStorage.getItem('tokens')) {
+
+    } else {
+
+    }
+    $('#registerPage').click(function(event) {
+        event.preventDefault()
+        showHideRegisterPage()
+    })
+
+    $('#loginPage').click(function(event) {
+        event.preventDefault()
+        showHideLoginPage()
+    })
     getNews()
     registerUser()
     loginUser()
-    homePage()
-    loginPage()
-    registerPage()
+    putVideo()
+    getMoreNews()
 })
 
 
 function homePage() {
     $('#form-register').hide()
-    $('#match').hide()
     $('#form-signin').hide()
     $('#carouselImg').show()
     $('#loginPage').show()
     $('#logout').hide()
+    $('#sidebar').show()
 }
 
 function showHideLoginPage() {
@@ -33,6 +40,10 @@ function showHideLoginPage() {
     $('#match').hide()
     $('#form-signin').show()
     $('#carouselImg').hide()
+    $('#sidebar').hide()
+    $('#result1').hide()
+    $('#result2').hide()
+    $('#moreNews').hide()
 }
 
 function showHideRegisterPage() {
@@ -41,74 +52,10 @@ function showHideRegisterPage() {
     $('#match').hide()
     $('#form-signin').hide()
     $('#carouselImg').hide()
-}
-
-function registerPage() {
-    $('#registerPage').click(function(event) {
-        event.preventDefault()
-        showHideRegisterPage()
-    })
-}
-
-function loginPage() {
-    $('#loginPage').click(function(event) {
-        event.preventDefault()
-        showHideLoginPage()
-    })
-}
-
-function getMatch(){
-    $.ajax({
-        url: `https://api.football-data.org/v2/competitions/CL/matches?status=FINISHED`,
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
-        }
-    })
-    .done(({matches})=> {
-        for (let i = 0; i < matches.length; i++){
-            $('#match').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} ${matches[i].score.fullTime.homeTeam} vs ${matches[i].score.fullTime.awayTeam} ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
-        }
-        console.log(matches)
-    })
-    .fail((jqXHR, textstatus) => {
-        console.log('fail', textstatus)
-    })
-}
-
-function upComming(){
-    $.ajax({
-        url: `https://api.football-data.org/v2/competitions/CL/matches?status=SCHEDULED`,
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
-        }
-    })
-    .done(({matches})=> {
-        for (let i = 0; i < matches.length; i++){
-            $('#match').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} vs  ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
-        }
-        console.log(matches)
-    })
-    .fail((jqXHR, textstatus) => {
-        console.log('fail', textstatus)
-    })
+    $('#sidebar').hide()
+    $('#result1').hide()
+    $('#result2').hide()
+    $('#moreNews').hide()
 }
 
 
@@ -158,8 +105,12 @@ function loginUser() {
             localStorage.setItem('email', $("#inputEmail").val())
             showUserProfile()
             homePage()
+            $('#match').show()
             $('#loginPage').hide()
             $('#logout').show()
+            $('#result1').show()
+            $('#result2').show()
+            $('#moreNews').show()
 
         })
         .fail((err) => {
@@ -169,6 +120,7 @@ function loginUser() {
 }
 
 function onSignIn(googleUser) {
+    // event.preventDefault()
     var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
@@ -188,8 +140,12 @@ function onSignIn(googleUser) {
             localStorage.setItem('picture',profile.getImageUrl())
             showUserProfile()
             homePage()
+            $('#match').show()
             $('#loginPage').hide()
             $('#logout').show()
+            $('#result1').show()
+            $('#result2').show()
+            $('#moreNews').show()
         })
         .fail((err) => {
             console.log(err);
@@ -209,20 +165,6 @@ function signOut() {
     });
 }
 
-function preLogin(){
-    $('#form-signin').show()
-    $('#form-register').hide()
-    $('#match').hide()
-    $('#upComming').hide()
-    $('#sidebar').hide()
-}
-
-function Login(){
-    $('#form-signin').hide()
-    $('#form-register').hide()
-    $('#sidebar').show()
-}
-
 function showUserProfile() {
    const storageToken = localStorage.getItem('token')
    const emailToken = localStorage.getItem('email')
@@ -230,13 +172,14 @@ function showUserProfile() {
 //    console.log(storageToken);
     // console.log(emailToken);
    if(storageToken && emailToken && picture) {
+       console.log('asd');
        $('#profile').append(`
        <div class="card">
        <div class="text-center">
        <img src="${picture}" width="100px" height="100px" class="img-thumbnail rounded-circle">
-       <div class="card-body">
+       <div class="card-body userData">
        <h5 class="card-title">${emailToken}</h5>
-       <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+       <p class="card-text">Hello again ${emailToken}. Have a good Day!</p>
        </div>
        </div>
      </div>
@@ -246,10 +189,10 @@ function showUserProfile() {
     $('#profile').append(`
     <div class="card">
         <div class="text-center">
-        <img src="../images/img_avatar.png" width="100px" height="100px" class="img-thumbnail rounded-circle">
-        <div class="card-body">
+        <img src="./images/img_avatar.png" width="100px" height="100px" class="img-thumbnail rounded-circle">
+        <div class="card-body userData">
         <h5 class="card-title">${emailToken}</h5>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <p class="card-text">Hello again ${emailToken}. Have a good Day!</p>
         </div>
         </div>
     </div>
@@ -257,6 +200,10 @@ function showUserProfile() {
    } else {
        $('#profile').hide()
    }
+}
+
+function loggedIn() {
+
 }
 
 
