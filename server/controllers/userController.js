@@ -61,7 +61,7 @@ class UserController {
                         email: emailFound.email
                     })
                     res.status(200).json(token)
-                    next()
+                    // next()
                 } else {
                     console.log(emailFound)
                     return User.create({
@@ -73,11 +73,15 @@ class UserController {
             })
             .then((dataCreated) => {
                 // console.log(dataCreated);
-                const token = sign({
-                    username: dataCreated.username,
-                    email: dataCreated.email
-                })
-                res.status(201).json(token)
+                if(dataCreated) {
+                    const token = sign({
+                        username: dataCreated.username,
+                        email: dataCreated.email
+                    })
+                    res.status(201).json(token)
+                } else {
+                    next()
+                }
             })
             .catch(next)
         // console.log(payload);

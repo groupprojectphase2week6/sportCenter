@@ -23,6 +23,8 @@ function homePage() {
     $('#match').hide()
     $('#form-signin').hide()
     $('#carouselImg').show()
+    $('#loginPage').show()
+    $('#logout').hide()
 }
 
 function showHideLoginPage() {
@@ -154,6 +156,10 @@ function loginUser() {
             console.log(datas);
             localStorage.setItem('token', datas)
             localStorage.setItem('email', $("#inputEmail").val())
+            showUserProfile()
+            homePage()
+            $('#loginPage').hide()
+            $('#logout').show()
 
         })
         .fail((err) => {
@@ -182,6 +188,8 @@ function onSignIn(googleUser) {
             localStorage.setItem('picture',profile.getImageUrl())
             showUserProfile()
             homePage()
+            $('#loginPage').hide()
+            $('#logout').show()
         })
         .fail((err) => {
             console.log(err);
@@ -194,6 +202,9 @@ function signOut() {
         localStorage.removeItem('token')
         localStorage.removeItem('email')
         localStorage.removeItem('picture')
+        showUserProfile()
+        homePage()
+        $('loginPage').show()
       console.log('User signed out.');
     });
 }
@@ -218,22 +229,31 @@ function showUserProfile() {
    const picture = localStorage.getItem('picture')
 //    console.log(storageToken);
     // console.log(emailToken);
-   if(storageToken && emailToken) {
+   if(storageToken && emailToken && picture) {
        $('#profile').append(`
        <div class="card">
-       <img src="${picture}" class="img-thumbnail rounded-circle">
+       <div class="text-center">
+       <img src="${picture}" width="100px" height="100px" class="img-thumbnail rounded-circle">
        <div class="card-body">
-         <h5 class="card-title">${emailToken}</h5>
-         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+       <h5 class="card-title">${emailToken}</h5>
+       <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
        </div>
-       <ul class="list-group list-group-flush">
-         <li class="list-group-item">Cras justo odio</li>
-         <li class="list-group-item">Dapibus ac facilisis in</li>
-         <li class="list-group-item">Vestibulum at eros</li>
-       </ul>
+       </div>
      </div>
        `)
     //    $('#profile').show()
+   } else if(storageToken && emailToken) {
+    $('#profile').append(`
+    <div class="card">
+        <div class="text-center">
+        <img src="../images/img_avatar.png" width="100px" height="100px" class="img-thumbnail rounded-circle">
+        <div class="card-body">
+        <h5 class="card-title">${emailToken}</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+        </div>
+    </div>
+    `)
    } else {
        $('#profile').hide()
    }
