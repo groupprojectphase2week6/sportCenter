@@ -7,7 +7,108 @@ $(document).ready(() => {
     // registerUser()
     // loginUser()
     Login()
+    getMatch()
+    upComming()
+    getNews()
+    registerUser()
+    loginUser()
+    homePage()
+    loginPage()
+    registerPage()
 })
+
+
+function homePage() {
+    $('#form-register').hide()
+    $('#match').hide()
+    $('#form-signin').hide()
+    $('#carouselImg').show()
+}
+
+function showHideLoginPage() {
+    $('form-signin').empty()
+    $('#form-register').hide()
+    $('#match').hide()
+    $('#form-signin').show()
+    $('#carouselImg').hide()
+}
+
+function showHideRegisterPage() {
+    $('form-register').empty()
+    $('#form-register').show()
+    $('#match').hide()
+    $('#form-signin').hide()
+    $('#carouselImg').hide()
+}
+
+function registerPage() {
+    $('#registerPage').click(function(event) {
+        event.preventDefault()
+        showHideRegisterPage()
+    })
+}
+
+function loginPage() {
+    $('#loginPage').click(function(event) {
+        event.preventDefault()
+        showHideLoginPage()
+    })
+}
+
+function getMatch(){
+    $.ajax({
+        url: `https://api.football-data.org/v2/competitions/CL/matches?status=FINISHED`,
+        method: 'GET',
+        headers: {
+            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
+        }
+    })
+    .done(({matches})=> {
+        for (let i = 0; i < matches.length; i++){
+            $('#match').append(
+                `
+                    <div class="list-group" style="text-align: center;">
+                        <a href="#" class="list-group-item list-group-item-action">
+                        ${matches[i].homeTeam.name} ${matches[i].score.fullTime.homeTeam} vs ${matches[i].score.fullTime.awayTeam} ${matches[i].awayTeam.name}
+                        </a>
+                    </div>
+                `
+            )
+        }
+        console.log(matches)
+    })
+    .fail((jqXHR, textstatus) => {
+        console.log('fail', textstatus)
+    })
+}
+
+function upComming(){
+    $.ajax({
+        url: `https://api.football-data.org/v2/competitions/CL/matches?status=SCHEDULED`,
+        method: 'GET',
+        headers: {
+            'X-Auth-Token': 'b00ee5aa8d01494b9a8a1e4a2a08964e'
+        }
+    })
+    .done(({matches})=> {
+        for (let i = 0; i < matches.length; i++){
+            $('#match').append(
+                `
+                    <div class="list-group" style="text-align: center;">
+                        <a href="#" class="list-group-item list-group-item-action">
+                        ${matches[i].homeTeam.name} vs  ${matches[i].awayTeam.name}
+                        </a>
+                    </div>
+                `
+            )
+        }
+        console.log(matches)
+    })
+    .fail((jqXHR, textstatus) => {
+        console.log('fail', textstatus)
+    })
+}
+
 
 function registerUser() {
     const regisForm = '#form-register'
@@ -50,7 +151,10 @@ function loginUser() {
             // },
     })
         .done((datas) => {
+            console.log(datas);
             localStorage.setItem('token', datas)
+            localStorage.setItem('email', $("#inputEmail").val())
+
         })
         .fail((err) => {
             console.log(err);
@@ -74,6 +178,10 @@ function onSignIn(googleUser) {
     })
         .done((datas) => {
             localStorage.setItem('token',datas)
+            localStorage.setItem('email',profile.getEmail())
+            localStorage.setItem('picture',profile.getImageUrl())
+            showUserProfile()
+            homePage()
         })
         .fail((err) => {
             console.log(err);
@@ -84,6 +192,8 @@ function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         localStorage.removeItem('token')
+        localStorage.removeItem('email')
+        localStorage.removeItem('picture')
       console.log('User signed out.');
     });
 }
@@ -100,6 +210,33 @@ function Login(){
     $('#form-signin').hide()
     $('#form-register').hide()
     $('#sidebar').show()
+}
+
+function showUserProfile() {
+   const storageToken = localStorage.getItem('token')
+   const emailToken = localStorage.getItem('email')
+   const picture = localStorage.getItem('picture')
+//    console.log(storageToken);
+    // console.log(emailToken);
+   if(storageToken && emailToken) {
+       $('#profile').append(`
+       <div class="card">
+       <img src="${picture}" class="img-thumbnail rounded-circle">
+       <div class="card-body">
+         <h5 class="card-title">${emailToken}</h5>
+         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+       </div>
+       <ul class="list-group list-group-flush">
+         <li class="list-group-item">Cras justo odio</li>
+         <li class="list-group-item">Dapibus ac facilisis in</li>
+         <li class="list-group-item">Vestibulum at eros</li>
+       </ul>
+     </div>
+       `)
+    //    $('#profile').show()
+   } else {
+       $('#profile').hide()
+   }
 }
 
 
