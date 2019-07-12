@@ -7,23 +7,26 @@ function getMatch(code){
         }
     })
     .done(({matches})=> {
+        console.log(matches)
+        $('#carouselExampleIndicators').empty()
         $('#match').empty()
         for (let i = 0; i < matches.length; i++){
             $('#match').append(
                 `
                     <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action" id='yutub'>
+                        <a href="#" class="list-group-item list-group-item-action" id="${matches[i].id}">
                         ${matches[i].homeTeam.name} ${matches[i].score.fullTime.homeTeam} vs ${matches[i].score.fullTime.awayTeam} ${matches[i].awayTeam.name}
                         </a>
                     </div>
                 `
             )
+
             let data = {
                 homeTeam : `${matches[i].homeTeam.name}`,
                 awayTeam : `${matches[i].awayTeam.name}`
             }
-            $("#yutub").on('click', ()=> {
-                cariVideo(data)
+            $(`#${matches[i].id}`).click(function(){
+                searchVideo(data)
             })
         }
     })
@@ -33,7 +36,6 @@ function getMatch(code){
 }
 
 function upComming(){
-    $("match").empty()
     $.ajax({
         url: `https://api.football-data.org/v2/competitions/CL/matches?status=SCHEDULED`,
         method: 'GET',
@@ -42,17 +44,42 @@ function upComming(){
         }
     })
     .done(({matches})=> {
+        $('#carouselExampleIndicators').empty()
+        // $('#CL').empty()
+        // $('#PL').empty()
+        // $('#SA').empty()
+        // $("#match").empty()
         for (let i = 0; i < 3; i++){
-            $('#CL').append(
-                `   
-                    <li>
-                    <a href="#" class="list-group-item list-group-item-action">
-                    ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
-                    </a>
-                    </li>
-                   
-                `
-            )
+            if(i == 0 ){
+                $('#CL').append(
+                    `   
+                    <div class="list-group" style="text-align: center; width: 100%">
+                        <h1> Champion League </h1>
+                        <a href="#" class="list-group-item list-group-item-action">
+                        ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                        <br>
+                        <p>Time: ${matches[i].utcDate}</p>
+                        </a>
+                        
+                    </div>
+                       
+                    `
+                )
+            } else {
+                $('#CL').append(
+                    `   
+                    <div class="list-group" style="text-align: center; width: 100%">
+                        <a href="#" class="list-group-item list-group-item-action">
+                        ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                        <br>
+                        <p>Time: ${matches[i].utcDate}</p>
+                        </a>
+                    </div>
+                       
+                    `
+                )
+            }
+            
         }
     })
     .fail((jqXHR, textstatus) => {
@@ -68,15 +95,32 @@ function upComming(){
     })
     .done(({matches})=> {
         for (let i = 0; i < 3; i++){
-            $('#PL').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
+            if(i == 0 ){
+                $('#PL').append(
+                    `
+                        <div class="list-group" style="text-align: center; width: 100%">
+                        <h1> Premier League </h1>
+                            <a href="#" class="list-group-item list-group-item-action">
+                            ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                            <br>
+                            <p>Time: ${matches[i].utcDate}</p>
+                            </a>
+                        </div>
+                    `
+                )
+            } else {
+                $('#PL').append(
+                    `
+                        <div class="list-group" style="text-align: center; width: 100%">
+                            <a href="#" class="list-group-item list-group-item-action">
+                            ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                            <br>
+                            <p>Time: ${matches[i].utcDate}</p>
+                            </a>
+                        </div>
+                    `
+                )
+            }
         }
     })
     .fail((jqXHR, textstatus) => {
@@ -92,15 +136,32 @@ function upComming(){
     })
     .done(({matches})=> {
         for (let i = 0; i < 3; i++){
-            $('#SA').append(
-                `
-                    <div class="list-group" style="text-align: center;">
-                        <a href="#" class="list-group-item list-group-item-action">
-                        ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
-                        </a>
-                    </div>
-                `
-            )
+            if(i == 0){
+                $('#SA').append(
+                    `
+                        <div class="list-group" style="text-align: center; width: 100%">
+                        <h1> Ligue 1 </h1>
+                            <a href="#" class="list-group-item list-group-item-action">
+                            ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                            <br>
+                            <p>Time: ${matches[i].utcDate}</p> 
+                            </a>
+                        </div>
+                    `
+                )
+            } else {
+                $('#SA').append(
+                    `
+                        <div class="list-group" style="text-align: center; width: 100%">
+                            <a href="#" class="list-group-item list-group-item-action">
+                            ${matches[i].homeTeam.name} vs ${matches[i].awayTeam.name}
+                            <br>
+                            <p>Time: ${matches[i].utcDate.toLocaleString()}</p>
+                            </a>
+                        </div>
+                    `
+                )
+            }
         }
     })
     .fail((jqXHR, textstatus) => {
